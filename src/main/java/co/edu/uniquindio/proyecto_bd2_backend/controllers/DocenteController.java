@@ -19,17 +19,10 @@ public class DocenteController {
 
     private final DocenteService docenteService;
 
-    /**
-    @PostMapping("/listarBancoPreguntas")
-    public ResponseEntity<MensajeDTO<List<PreguntaBancoDTO>>> listarBancoPreguntas(@RequestBody Long id_tema) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.obtenerBancoPreguntas(id_tema)));
-    }
-    **/
-
 
     @PostMapping("/crearRespuesta")
-    public ResponseEntity<MensajeDTO<String>> crearRespuesta(@RequestBody String descripcion, Character esVerdadera, Long id_pregunta) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearRespuesta(descripcion, esVerdadera, id_pregunta)));
+    public ResponseEntity<MensajeDTO<String>> crearRespuesta(@RequestBody CrearRespuestaDto crearRespuestaDto) {
+        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearRespuesta(crearRespuestaDto.descripcion(), crearRespuestaDto.esVerdadera(), crearRespuestaDto.id_pregunta())));
     }
 
     @PostMapping("/crearExamen")

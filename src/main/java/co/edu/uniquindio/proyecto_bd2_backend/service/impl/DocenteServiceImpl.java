@@ -59,6 +59,8 @@ public class DocenteServiceImpl implements DocenteService {
 
         return (List<PreguntaBancoDTO>) result.get("p_preguntas");
     }
+
+
     @Transactional
     @Override
     public String crearRespuesta(String descripcion, Character esVerdadera, Long id_pregunta) {
