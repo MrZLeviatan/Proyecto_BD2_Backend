@@ -137,7 +137,7 @@ public class AlumnoServiceImp implements AlumnoService {
 
         // Establecer los valores de los parámetros de entrada
         storedProcedure.setParameter("p_id_usuario", id);
-        storedProcedure.setParameter("rol", "alumno");
+        storedProcedure.setParameter("rol", rol);
 
         // Ejecutar el procedimiento almacenado
         storedProcedure.execute();
