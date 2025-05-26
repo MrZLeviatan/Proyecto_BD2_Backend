@@ -31,14 +31,13 @@ public class DocenteController {
     }
 
     @PostMapping("/crearPregunta")
-    public ResponseEntity<MensajeDTO<String>> crearPregunta(@RequestBody String enunciado, Character es_publica, String tipoPregunta,
-                                                            Integer id_tema, Integer id_docente) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearPregunta(enunciado,es_publica,tipoPregunta,id_tema,id_docente)));
+    public ResponseEntity<MensajeDTO<String>> crearPregunta(@RequestBody CrearPreguntaDto dto) {
+        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearPregunta(dto.enunciado(),dto.esPublica(),dto.tipoPregunta(),dto.idTema(),dto.idDocente())));
     }
 
     @PostMapping("/calificarExamen")
-    public ResponseEntity<MensajeDTO<String>> calificarExamen(@RequestBody   Long id_presentacion_examen) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.calificarExamen(id_presentacion_examen)));
+    public ResponseEntity<MensajeDTO<String>> calificarExamen(@RequestBody  CalificarExamen dto) {
+        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.calificarExamen(dto.idPresentacionExamen(), dto.calificacion())));
     }
 
 
@@ -56,6 +55,7 @@ public class DocenteController {
     public ResponseEntity<MensajeDTO<String>> obtenerNombre(@PathVariable String id, @PathVariable String rol) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.obtenerNombre(id, rol)));
     }
+
     @GetMapping("/cursos/{id}/{rol}")
     public ResponseEntity<MensajeDTO<List<CursoDTO>>> obtenerCursos(@PathVariable String id, @PathVariable String rol) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.obtenerCursos(id, rol)));

@@ -158,16 +158,18 @@ public class DocenteServiceImpl implements DocenteService {
 
     @Override
     @Transactional
-    public String calificarExamen(Long idPresentacionExamen) {
+    public String calificarExamen(Long idPresentacionExamen , Integer calificacion) {
         // Crear una consulta para el procedimiento almacenado
         StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("calificar_examen");
 
         // Registrar los parámetros de entrada y salida del procedimiento almacenado
         storedProcedure.registerStoredProcedureParameter("v_id_presentacion_examen", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_calificacion", Integer.class, ParameterMode.IN);        // Calificación
         storedProcedure.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
 
         // Establecer los valores de los parámetros de entrada
         storedProcedure.setParameter("v_id_presentacion_examen", idPresentacionExamen);
+        storedProcedure.setParameter("v_calificacion", calificacion);
 
         // Ejecutar el procedimiento almacenado
         storedProcedure.execute();
@@ -241,7 +243,7 @@ public class DocenteServiceImpl implements DocenteService {
 
         // Establecer los valores de los parámetros de entrada
         storedProcedure.setParameter("p_id_usuario", id);
-        storedProcedure.setParameter("rol", "alumno");
+        storedProcedure.setParameter("rol", rol);
 
         // Ejecutar el procedimiento almacenado
         storedProcedure.execute();
@@ -264,7 +266,7 @@ public class DocenteServiceImpl implements DocenteService {
 
         // Establecer los valores de los parámetros de entrada
         storedProcedure.setParameter("p_id_usuario", id);
-        storedProcedure.setParameter("rol", "alumno");
+        storedProcedure.setParameter("rol", rol);
 
         // Ejecutar el procedimiento almacenado
         storedProcedure.execute();

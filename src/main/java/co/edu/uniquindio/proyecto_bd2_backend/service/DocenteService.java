@@ -19,7 +19,7 @@ public interface DocenteService {
                           Integer id_tema, Integer id_docente);
 
 
-    String calificarExamen (Long id_presentacion_examen);
+    String calificarExamen (Long id_presentacion_examen , Integer calificacion);
 
     List <PreguntaBancoDTO> obtenerPreguntasDocente(Long id_docente);
 
