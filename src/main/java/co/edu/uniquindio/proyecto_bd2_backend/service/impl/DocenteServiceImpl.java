@@ -105,6 +105,34 @@ public class DocenteServiceImpl implements DocenteService {
 
     }
 
+    @Override
+    @Transactional
+    public String agregarPreguntaExamen(PreguntaExamenDto preguntaExamenDto) {
+        // Crear consulta para el procedimiento almacenado
+        StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("agregar_pregunta_examen");
+
+        // Registrar parámetros de entrada
+        storedProcedure.registerStoredProcedureParameter("v_porcentaje_examen", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_tiempo_pregunta", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_tiene_tiempo_maximo", Character.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_id_pregunta", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_id_examen", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
+
+        // Establecer valores
+        storedProcedure.setParameter("v_porcentaje_examen", preguntaExamenDto.porcentajeExamen());
+        storedProcedure.setParameter("v_tiempo_pregunta", preguntaExamenDto.tiempoPregunta());
+        storedProcedure.setParameter("v_tiene_tiempo_maximo", preguntaExamenDto.tieneTiempoMaximo());
+        storedProcedure.setParameter("v_id_pregunta", preguntaExamenDto.idPregunta());
+        storedProcedure.setParameter("v_id_examen", preguntaExamenDto.idExamen());
+
+        // Ejecutar procedimiento
+        storedProcedure.execute();
+
+        // Obtener mensaje de salida
+        return (String) storedProcedure.getOutputParameterValue("v_mensaje");
+    }
+
 
     @Transactional
     @Override
@@ -166,6 +194,9 @@ public class DocenteServiceImpl implements DocenteService {
         // Retornar el mensaje
         return mensaje;
     }
+
+
+
 
     @Override
     @Transactional

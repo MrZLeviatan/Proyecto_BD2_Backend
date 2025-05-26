@@ -10,13 +10,12 @@ public interface DocenteService {
 
     String crearExamen (CrearExamenDTO examenDTO) throws ParseException;
 
+    String agregarPreguntaExamen (PreguntaExamenDto preguntaExamenDto);
+
     String crearPregunta (String enunciado, Character es_publica, String tipoPregunta,
                           Integer id_tema, Integer id_docente);
 
-
     String crearRespuesta (String descripcion, Character esVerdadera, Long id_pregunta );
-
-
 
     String calificarExamen (Long id_presentacion_examen , Integer calificacion);
 

@@ -25,20 +25,21 @@ public class DocenteController {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearExamen(examenDTO)));
     }
 
+    @PostMapping("/agregar-pregunta-examen")
+    public ResponseEntity<MensajeDTO<String>> agregarPreguntaExamen(@RequestBody PreguntaExamenDto dto) {
+        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.agregarPreguntaExamen(dto)));
+    }
+
 
     @PostMapping("/crearPregunta")
     public ResponseEntity<MensajeDTO<String>> crearPregunta(@RequestBody CrearPreguntaDto dto) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearPregunta(dto.enunciado(),dto.esPublica(),dto.tipoPregunta(),dto.idTema(),dto.idDocente())));
     }
 
-
     @PostMapping("/crearRespuesta")
     public ResponseEntity<MensajeDTO<String>> crearRespuesta(@RequestBody CrearRespuestaDto crearRespuestaDto) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearRespuesta(crearRespuestaDto.descripcion(), crearRespuestaDto.esVerdadera(), crearRespuestaDto.id_pregunta())));
     }
-
-
-
 
 
     @PostMapping("/calificarExamen")
