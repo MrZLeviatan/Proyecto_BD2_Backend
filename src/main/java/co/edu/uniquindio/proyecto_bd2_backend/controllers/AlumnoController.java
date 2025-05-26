@@ -16,6 +16,7 @@ public class AlumnoController {
 
     private final AlumnoService alumnoService;
 
+
     @PostMapping("/guardar-pregunta")
     public ResponseEntity<MensajeDTO<String>> guardarPregunta(@RequestBody PreguntaDTO preguntaDTO) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", alumnoService.guardarPregunta(preguntaDTO)));
@@ -23,8 +24,8 @@ public class AlumnoController {
 
     // FUNCIONA
     @PostMapping("/obtener-nota")
-    public ResponseEntity<MensajeDTO<Float>> obtenerNota(@RequestBody Long id_presentacion_examen) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", alumnoService.obtenerNotaPresentacionExamen(id_presentacion_examen)));
+    public ResponseEntity<MensajeDTO<Float>> obtenerNota(@RequestBody ObtenerNotaDto dto ) {
+        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", alumnoService.obtenerNotaPresentacionExamen(dto.idPresentacion(), dto.idAlumno())));
     }
 
     @PostMapping("/presentar-examen")

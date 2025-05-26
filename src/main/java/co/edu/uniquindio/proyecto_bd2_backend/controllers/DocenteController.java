@@ -20,20 +20,26 @@ public class DocenteController {
     private final DocenteService docenteService;
 
 
-    @PostMapping("/crearRespuesta")
-    public ResponseEntity<MensajeDTO<String>> crearRespuesta(@RequestBody CrearRespuestaDto crearRespuestaDto) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearRespuesta(crearRespuestaDto.descripcion(), crearRespuestaDto.esVerdadera(), crearRespuestaDto.id_pregunta())));
-    }
-
     @PostMapping("/crearExamen")
     public ResponseEntity<MensajeDTO<String>> crearExamen(@RequestBody CrearExamenDTO examenDTO) throws ParseException {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearExamen(examenDTO)));
     }
 
+
     @PostMapping("/crearPregunta")
     public ResponseEntity<MensajeDTO<String>> crearPregunta(@RequestBody CrearPreguntaDto dto) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearPregunta(dto.enunciado(),dto.esPublica(),dto.tipoPregunta(),dto.idTema(),dto.idDocente())));
     }
+
+
+    @PostMapping("/crearRespuesta")
+    public ResponseEntity<MensajeDTO<String>> crearRespuesta(@RequestBody CrearRespuestaDto crearRespuestaDto) {
+        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.crearRespuesta(crearRespuestaDto.descripcion(), crearRespuestaDto.esVerdadera(), crearRespuestaDto.id_pregunta())));
+    }
+
+
+
+
 
     @PostMapping("/calificarExamen")
     public ResponseEntity<MensajeDTO<String>> calificarExamen(@RequestBody  CalificarExamen dto) {

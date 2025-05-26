@@ -10,7 +10,7 @@ public interface AlumnoService {
 
     String guardarPregunta(PreguntaDTO preguntaDTO);
 
-    Float obtenerNotaPresentacionExamen (Long id_presentacion_examen);
+    Float obtenerNotaPresentacionExamen (Long id_presentacion, long id_alumno);
 
     String obtenerNombre(String id, String rol);
 

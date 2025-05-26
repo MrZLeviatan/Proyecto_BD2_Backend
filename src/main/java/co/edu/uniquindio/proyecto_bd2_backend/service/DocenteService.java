@@ -8,15 +8,14 @@ import java.util.List;
 public interface DocenteService {
 
 
-
-    List<PreguntaBancoDTO> obtenerBancoPreguntas (Long id_tema);
-
-    String crearRespuesta (String descripcion, Character esVerdadera, Long id_pregunta );
-
     String crearExamen (CrearExamenDTO examenDTO) throws ParseException;
 
     String crearPregunta (String enunciado, Character es_publica, String tipoPregunta,
                           Integer id_tema, Integer id_docente);
+
+
+    String crearRespuesta (String descripcion, Character esVerdadera, Long id_pregunta );
+
 
 
     String calificarExamen (Long id_presentacion_examen , Integer calificacion);
@@ -32,5 +31,8 @@ public interface DocenteService {
     List<TemasCursoDTO> obtenerTemasCurso(Integer id_curso);
 
     List<TemasCursoDTO> obtenerTemasDocente();
+
+    List<PreguntaBancoDTO> obtenerBancoPreguntas (Long id_tema);
+
 
 }

@@ -61,6 +61,51 @@ public class DocenteServiceImpl implements DocenteService {
     }
 
 
+    @Override
+    @Transactional
+    public String crearExamen(CrearExamenDTO examenDTO) throws ParseException {
+        StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("crear_examen");
+
+        storedProcedure.registerStoredProcedureParameter("v_tiempo_max", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_numero_preguntas", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_porcentaje_curso", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_nombre", String.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_porcentaje_aprobatorio", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_fecha_hora_inicio", Date.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_fecha_hora_fin", Date.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_num_preguntas_aleatorias", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_id_tema", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_id_docente", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_id_grupo", Integer.class, ParameterMode.IN);
+        storedProcedure.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
+
+        storedProcedure.setParameter("v_tiempo_max", examenDTO.tiempo_max());
+        storedProcedure.setParameter("v_numero_preguntas", examenDTO.numero_preguntas());
+        storedProcedure.setParameter("v_porcentaje_curso", examenDTO.porcentajeCurso());
+        storedProcedure.setParameter("v_nombre", examenDTO.nombre());
+        storedProcedure.setParameter("v_porcentaje_aprobatorio", examenDTO.porcentaje_aprobatorio());
+
+        storedProcedure.setParameter("v_fecha_hora_inicio", examenDTO.fecha_hora_inicio());
+        storedProcedure.setParameter("v_fecha_hora_fin", examenDTO.fecha_hora_fin());
+
+        storedProcedure.setParameter("v_num_preguntas_aleatorias", examenDTO.num_preguntas_aleatorias());
+        storedProcedure.setParameter("v_id_tema", examenDTO.id_tema());
+        storedProcedure.setParameter("v_id_docente", examenDTO.id_docente());
+        storedProcedure.setParameter("v_id_grupo", examenDTO.id_grupo());
+
+
+        // Ejecutar el procedimiento almacenado
+        storedProcedure.execute();
+
+        // Obtener el valor del parámetro de salida
+        String mensaje = (String) storedProcedure.getOutputParameterValue("v_mensaje");
+
+        // Retornar el mensaje
+        return mensaje;
+
+    }
+
+
     @Transactional
     @Override
     public String crearRespuesta(String descripcion, Character esVerdadera, Long id_pregunta) {
@@ -89,41 +134,7 @@ public class DocenteServiceImpl implements DocenteService {
             return mensaje;
         }
 
-    @Override
-    @Transactional
-    public String crearExamen(CrearExamenDTO examenDTO) throws ParseException {
-        StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("crear_examen");
 
-        storedProcedure.registerStoredProcedureParameter("v_tiempo_max", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_numero_preguntas", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_porcentaje_curso", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_nombre", String.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_porcentaje_aprobatorio", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_fecha_hora_inicio", Date.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_fecha_hora_fin", Date.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_num_preguntas_aleatorias", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_id_tema", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_id_docente", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_id_grupo", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
-        storedProcedure.registerStoredProcedureParameter("v_error", String.class, ParameterMode.OUT);
-
-        storedProcedure.setParameter("v_tiempo_max", examenDTO.tiempo_max());
-        storedProcedure.setParameter("v_numero_preguntas", examenDTO.numero_preguntas());
-        storedProcedure.setParameter("v_porcentaje_curso", examenDTO.porcentajeCurso());
-        storedProcedure.setParameter("v_nombre", examenDTO.nombre());
-        storedProcedure.setParameter("v_porcentaje_aprobatorio", examenDTO.porcentaje_aprobatorio());
-
-        storedProcedure.setParameter("v_fecha_hora_inicio", examenDTO.fecha_hora_inicio());
-        storedProcedure.setParameter("v_fecha_hora_fin", examenDTO.fecha_hora_fin());
-
-        storedProcedure.setParameter("v_num_preguntas_aleatorias", examenDTO.num_preguntas_aleatorias());
-        storedProcedure.setParameter("v_id_tema", examenDTO.id_tema());
-        storedProcedure.setParameter("v_id_docente", examenDTO.id_docente());
-        storedProcedure.setParameter("v_id_grupo", examenDTO.id_grupo());
-        examenRepository.save(new Examen(null, examenDTO.tiempo_max(), examenDTO.numero_preguntas(), examenDTO.porcentajeCurso(), examenDTO.nombre(), examenDTO.porcentaje_aprobatorio(),examenDTO.fecha_hora_inicio(), examenDTO.fecha_hora_fin(), examenDTO.num_preguntas_aleatorias(),examenDTO.id_tema(), examenDTO.id_docente(), examenDTO.id_grupo()));
-        return "Examen creado exitosamente";
-    }
 
     @Override
     @Transactional

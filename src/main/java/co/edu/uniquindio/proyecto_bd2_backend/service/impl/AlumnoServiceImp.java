@@ -54,26 +54,31 @@ public class AlumnoServiceImp implements AlumnoService {
     }
     @Transactional
     @Override
-    public Float obtenerNotaPresentacionExamen(Long id_presentacion_examen) {
+    public Float obtenerNotaPresentacionExamen(Long id_presentacion_examen , long id_alumno) {
             // Crear una consulta para el procedimiento almacenado
             StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("obtener_nota");
 
             // Registrar los parámetros de entrada y salida del procedimiento almacenado
-            storedProcedure.registerStoredProcedureParameter("v_id_presentacion_examen", Integer.class, ParameterMode.IN);
-            storedProcedure.registerStoredProcedureParameter("v_nota", Float.class, ParameterMode.OUT);
+            storedProcedure.registerStoredProcedureParameter("p_id_presentacion", Integer.class, ParameterMode.IN);
+            storedProcedure.registerStoredProcedureParameter("p_id_alumno", Integer.class, ParameterMode.IN);
+            storedProcedure.registerStoredProcedureParameter("p_nota", Float.class, ParameterMode.OUT);
 
             // Establecer los valores de los parámetros de entrada
-            storedProcedure.setParameter("v_id_presentacion_examen", id_presentacion_examen);
+            storedProcedure.setParameter("p_id_presentacion", id_presentacion_examen);
+            storedProcedure.setParameter("p_id_alumno", id_alumno);
 
-            // Ejecutar el procedimiento almacenado
+
+        // Ejecutar el procedimiento almacenado
             storedProcedure.execute();
 
             // Obtener el valor del parámetro de salida
-            Float nota = (Float) storedProcedure.getOutputParameterValue("v_nota");
+            Float nota = (Float) storedProcedure.getOutputParameterValue("p_nota");
 
             // Retornar la nota
             return nota != null ? nota : 0.0f;
         }
+
+
     @Transactional
     @Override
     public String crearPresentacionExamen(Integer tiempo, Character terminado, String ip_source, Date fecha_hora_presentacion, Integer id_examen, Integer id_alumno) {
