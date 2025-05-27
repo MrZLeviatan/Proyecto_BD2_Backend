@@ -33,5 +33,7 @@ public interface DocenteService {
 
     List<PreguntaBancoDTO> obtenerBancoPreguntas (Long id_tema);
 
+    public List<RespuestaEstudianteConsultaDto> verRespuestasEstudiante(Integer idExamen, Integer idAlumno);
+
 
 }

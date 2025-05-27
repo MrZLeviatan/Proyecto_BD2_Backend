@@ -17,24 +17,31 @@ public class AlumnoController {
     private final AlumnoService alumnoService;
 
 
-    @PostMapping("/guardar-pregunta")
-    public ResponseEntity<MensajeDTO<String>> guardarPregunta(@RequestBody PreguntaDTO preguntaDTO) {
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", alumnoService.guardarPregunta(preguntaDTO)));
+    @PostMapping("/registrar-respuesta")
+    public ResponseEntity<MensajeDTO<String>> registrarRespuesta(
+            @RequestBody RespuestaEstudianteDto dto) {
+        String mensaje = alumnoService.registrarRespuestaTexto(dto);
+        return ResponseEntity.ok(new MensajeDTO<>(false, "", mensaje));
     }
 
-    // FUNCIONA
+
     @PostMapping("/obtener-nota")
     public ResponseEntity<MensajeDTO<Float>> obtenerNota(@RequestBody ObtenerNotaDto dto ) {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", alumnoService.obtenerNotaPresentacionExamen(dto.idPresentacion(), dto.idAlumno())));
     }
 
+
     @PostMapping("/presentar-examen")
-    public ResponseEntity<MensajeDTO<String>> presentarExamen(@RequestBody PresentacionExamenDTO p) {
+    public ResponseEntity<MensajeDTO<List<PreguntaAlumnoExamenDto>>> presentarExamen(@RequestBody PresentacionExamenDTO p) {
 
+        List<PreguntaAlumnoExamenDto> preguntas = alumnoService.crearPresentacionExamen(
+                p.idExamen(), p.idAlumno());
 
-        return ResponseEntity.ok().body(new MensajeDTO<>(false, "", alumnoService.crearPresentacionExamen(p.tiempo(),
-                p.terminado(),p.ipSource(),p.fechaHoraPresentacion(),p.idExamen(),p.idAlumno())));
+        return ResponseEntity.ok().body(
+                new MensajeDTO<>(false, "Examen presentado correctamente", preguntas)
+        );
     }
+
 
     @GetMapping("/nombre/{id}/{rol}")
     public ResponseEntity<MensajeDTO<String>> obtenerNombre(@PathVariable String id, @PathVariable String rol) {
