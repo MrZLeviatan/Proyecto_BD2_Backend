@@ -6,3 +6,4 @@ public record CursoDTO(
         String nombre_curso
 ) {
 }
+

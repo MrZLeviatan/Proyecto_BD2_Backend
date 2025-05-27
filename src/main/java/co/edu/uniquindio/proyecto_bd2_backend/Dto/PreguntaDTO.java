@@ -7,5 +7,4 @@ public record PreguntaDTO(
         Integer id_tema,
         Integer id_docente
 ) {
-
 }

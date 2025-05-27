@@ -31,5 +31,6 @@ public class Examen {
     private Integer id_tema;
     private Integer id_docente;
     private Integer id_grupo;
+    private String estado;
 
 }
