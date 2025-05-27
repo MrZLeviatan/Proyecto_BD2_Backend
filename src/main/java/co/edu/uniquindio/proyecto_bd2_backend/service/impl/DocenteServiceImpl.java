@@ -20,12 +20,12 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 import org.springframework.stereotype.Service;
 
 import co.edu.uniquindio.proyecto_bd2_backend.Dto.*;
-import co.edu.uniquindio.proyecto_bd2_backend.models.Examen;
 
 import java.lang.reflect.Type;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -363,6 +363,38 @@ public class DocenteServiceImpl implements DocenteService {
                 rs.getLong("id_tema"),
                 rs.getLong("id_docente")
         );
+    }
+
+    @Transactional
+    @Override
+    public List<RespuestaEstudianteConsultaDto> verRespuestasEstudiante(Integer idExamen, Integer idAlumno) {
+        List<RespuestaEstudianteConsultaDto> lista = new ArrayList<>();
+
+        StoredProcedureQuery query = entityManager
+                .createStoredProcedureQuery("VER_RESPUESTAS_ESTUDIANTE");
+
+        query.registerStoredProcedureParameter("v_id_examen", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("v_id_alumno", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("v_cursor", void.class, ParameterMode.REF_CURSOR);
+
+        query.setParameter("v_id_examen", idExamen);
+        query.setParameter("v_id_alumno", idAlumno);
+
+        query.execute();
+
+        List<Object[]> resultados = query.getResultList();
+
+        for (Object[] fila : resultados) {
+            RespuestaEstudianteConsultaDto dto = new RespuestaEstudianteConsultaDto(
+                    ((Number) fila[3]).intValue(),           // ID_PRESENTACION_EXAMEN
+                    ((Number) fila[0]).intValue(),           // ID_PREGUNTA
+                    (String) fila[1],                        // ENUNCIADO
+                    (String) fila[2]                         // RESPUESTA_DEL_ESTUDIANTE
+            );
+            lista.add(dto);
+        }
+
+        return lista;
     }
 }
 

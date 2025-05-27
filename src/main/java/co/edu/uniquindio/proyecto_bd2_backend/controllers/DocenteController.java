@@ -77,4 +77,16 @@ public class DocenteController {
     public ResponseEntity<MensajeDTO<List<TemasCursoDTO>>> obtenerTemasDocente() {
         return ResponseEntity.ok().body(new MensajeDTO<>(false, "", docenteService.obtenerTemasDocente()));
     }
+
+
+    @GetMapping("/ver-respuestas")
+    public ResponseEntity<MensajeDTO<List<RespuestaEstudianteConsultaDto>>> verRespuestas(
+            @RequestParam Integer idExamen,
+            @RequestParam Integer idAlumno
+    ) {
+        List<RespuestaEstudianteConsultaDto> respuestas =
+                docenteService.verRespuestasEstudiante(idExamen, idAlumno);
+
+        return ResponseEntity.ok(new MensajeDTO<>(false, "", respuestas));
+    }
 }

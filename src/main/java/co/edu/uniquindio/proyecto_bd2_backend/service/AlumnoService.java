@@ -8,14 +8,13 @@ import java.util.List;
 
 public interface AlumnoService {
 
-    String guardarPregunta(PreguntaDTO preguntaDTO);
+    String registrarRespuestaTexto(RespuestaEstudianteDto dto);
 
     Float obtenerNotaPresentacionExamen (Long id_presentacion, long id_alumno);
 
     String obtenerNombre(String id, String rol);
 
-    String crearPresentacionExamen (Integer tiempo, Character terminado, String ip_source,
-                                    Date fecha_hora_presentacion, Integer id_examen, Integer id_alumno );
+    List<PreguntaAlumnoExamenDto> crearPresentacionExamen(Integer idExamen, Integer idAlumno);
 
     List<CursoDTO> obtenerCursos(String id, String rol);
 

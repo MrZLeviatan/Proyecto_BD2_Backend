@@ -13,8 +13,8 @@ import co.edu.uniquindio.proyecto_bd2_backend.Dto.*;
 
 
 import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.List;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -23,35 +23,26 @@ public class AlumnoServiceImp implements AlumnoService {
     private final EntityManager entityManager;
 
     @Transactional
-    public String guardarPregunta(PreguntaDTO preguntaDTO) {
-        // Crear una consulta para el procedimiento almacenado
-        StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("crear_pregunta");
+    @Override
+    public String registrarRespuestaTexto(RespuestaEstudianteDto dto) {
+        StoredProcedureQuery query =
+                entityManager.createStoredProcedureQuery("REGISTRAR_RESPUESTA_ESTUDIANTE");
 
+        query.registerStoredProcedureParameter("v_id_presentacion_examen", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("v_id_pregunta", Integer.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("v_enunciado_respuesta", String.class, ParameterMode.IN);
+        query.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
 
-        // Registrar los parámetros de entrada y salida del procedimiento almacenado
-        storedProcedure.registerStoredProcedureParameter("v_enunciado", String.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_es_publica", Character.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_tipo_pregunta", String.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_id_tema", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_id_docente", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
+        query.setParameter("v_id_presentacion_examen", dto.idPresentacionExamen());
+        query.setParameter("v_id_pregunta", dto.idPregunta());
+        query.setParameter("v_enunciado_respuesta", dto.enunciadoRespuesta());
 
+        query.execute();
 
-        // Establecer los valores de los parámetros de entrada
-        storedProcedure.setParameter("v_enunciado", preguntaDTO.enunciado());
-        storedProcedure.setParameter("v_es_publica", preguntaDTO.es_publica());
-        storedProcedure.setParameter("v_tipo_pregunta", preguntaDTO.tipo_pregunta());
-        storedProcedure.setParameter("v_id_tema", preguntaDTO.id_tema());
-        storedProcedure.setParameter("v_id_docente", preguntaDTO.id_docente());
-
-        // Ejecutar el procedimiento almacenado
-        storedProcedure.execute();
-
-        String mensaje = (String) storedProcedure.getOutputParameterValue("v_mensaje");
-
-        return mensaje;
-
+        return (String) query.getOutputParameterValue("v_mensaje");
     }
+
+
     @Transactional
     @Override
     public Float obtenerNotaPresentacionExamen(Long id_presentacion_examen , long id_alumno) {
@@ -78,26 +69,68 @@ public class AlumnoServiceImp implements AlumnoService {
             return nota != null ? nota : 0.0f;
         }
 
-
     @Transactional
     @Override
-    public String crearPresentacionExamen(Integer tiempo, Character terminado, String ip_source, Date fecha_hora_presentacion, Integer id_examen, Integer id_alumno) {
+    public List<PreguntaAlumnoExamenDto> crearPresentacionExamen(Integer idExamen, Integer idAlumno) {
 
-
-        StoredProcedureQuery storedProcedure = entityManager.createStoredProcedureQuery("crear_presentacion_examen");
+        StoredProcedureQuery storedProcedure = entityManager
+                .createStoredProcedureQuery("crear_presentacion_examen");
 
         storedProcedure.registerStoredProcedureParameter("v_id_examen", Integer.class, ParameterMode.IN);
         storedProcedure.registerStoredProcedureParameter("v_id_alumno", Integer.class, ParameterMode.IN);
-        storedProcedure.registerStoredProcedureParameter("v_mensaje", String.class, ParameterMode.OUT);
+        storedProcedure.registerStoredProcedureParameter("out_cursor", void.class, ParameterMode.REF_CURSOR);
 
-        storedProcedure.setParameter("v_id_examen", id_examen);
-        storedProcedure.setParameter("v_id_alumno", id_alumno);
+        storedProcedure.setParameter("v_id_examen", idExamen);
+        storedProcedure.setParameter("v_id_alumno", idAlumno);
 
         storedProcedure.execute();
-        String mensaje = (String) storedProcedure.getOutputParameterValue("v_mensaje");
-        return mensaje;
 
+        @SuppressWarnings("unchecked")
+        List<Object[]> results = storedProcedure.getResultList();
+
+        // Mapear preguntas y sus respuestas
+        Map<Integer, PreguntaAlumnoExamenDto> preguntasMap = new HashMap<>();
+        Map<Integer, List<RespuestaDto>> respuestasPorPregunta = new HashMap<>();
+
+        for (Object[] row : results) {
+            Integer idPregunta = ((BigDecimal) row[0]).intValue();
+            String enunciado = (String) row[1];
+            String tipoPregunta = (String) row[2];
+
+            BigDecimal idRespuestaRaw = (BigDecimal) row[3];
+            Integer idRespuesta = idRespuestaRaw != null ? idRespuestaRaw.intValue() : null;
+            String descripcion = (String) row[4];
+            String esCorrecta = String.valueOf(row[5]);
+
+            // Agregar respuesta si existe
+            if (idRespuesta != null) {
+                RespuestaDto respuesta = new RespuestaDto(idRespuesta, descripcion, esCorrecta);
+                respuestasPorPregunta.computeIfAbsent(idPregunta, k -> new ArrayList<>()).add(respuesta);
+            }
+
+            // Asegurar que la pregunta esté en el mapa
+            preguntasMap.putIfAbsent(idPregunta,
+                    new PreguntaAlumnoExamenDto(idPregunta, enunciado, tipoPregunta, new ArrayList<>()));
+        }
+
+        // Agregar las respuestas a cada pregunta
+        List<PreguntaAlumnoExamenDto> resultado = new ArrayList<>();
+        for (Map.Entry<Integer, PreguntaAlumnoExamenDto> entry : preguntasMap.entrySet()) {
+            Integer idPregunta = entry.getKey();
+            PreguntaAlumnoExamenDto pregunta = entry.getValue();
+            List<RespuestaDto> respuestas = respuestasPorPregunta.getOrDefault(idPregunta, List.of());
+
+            // Re-crear record con respuestas actualizadas
+            PreguntaAlumnoExamenDto preguntaFinal = new PreguntaAlumnoExamenDto(
+                    pregunta.idPregunta(), pregunta.enunciado(), pregunta.tipoPregunta(), respuestas
+            );
+            resultado.add(preguntaFinal);
+        }
+
+        return resultado;
     }
+
+
 
     @Override
     public String obtenerNombre(String id, String rol) {
@@ -137,7 +170,7 @@ public class AlumnoServiceImp implements AlumnoService {
 
         // Establecer los valores de los parámetros de entrada
         storedProcedure.setParameter("p_id_usuario", id);
-        storedProcedure.setParameter("rol", "alumno");
+        storedProcedure.setParameter("rol", rol);
 
         // Ejecutar el procedimiento almacenado
         storedProcedure.execute();
