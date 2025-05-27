@@ -79,14 +79,14 @@ public class DocenteController {
     }
 
 
-    @GetMapping("/ver-respuestas")
-    public ResponseEntity<MensajeDTO<List<RespuestaEstudianteConsultaDto>>> verRespuestas(
-            @RequestParam Integer idExamen,
-            @RequestParam Integer idAlumno
-    ) {
-        List<RespuestaEstudianteConsultaDto> respuestas =
-                docenteService.verRespuestasEstudiante(idExamen, idAlumno);
+        @GetMapping("/ver-respuestas/{idExamen}/{idAlumno}")
+        public ResponseEntity<MensajeDTO<List<RespuestaEstudianteConsultaDto>>> verRespuestas(
+                @PathVariable Integer idExamen,
+                @PathVariable Integer idAlumno
+        ) {
+            List<RespuestaEstudianteConsultaDto> respuestas =
+                    docenteService.verRespuestasEstudiante(idExamen, idAlumno);
 
-        return ResponseEntity.ok(new MensajeDTO<>(false, "", respuestas));
-    }
+            return ResponseEntity.ok(new MensajeDTO<>(false, "", respuestas));
+        }
 }
